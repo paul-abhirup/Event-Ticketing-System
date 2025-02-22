@@ -1,4 +1,7 @@
+require("@nomicfoundation/hardhat-verify");
 const hre = require("hardhat");
+
+require("dotenv").config();
 
 async function main() {
   const [deployer] = await hre.ethers.getSigners();
