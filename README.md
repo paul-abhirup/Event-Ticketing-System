@@ -1,6 +1,8 @@
 A blockchain-powered platform to manage the event ticketing system, where data  are stored on-chain as encrypted data. Consumers have full control over the transparency of the tickets as well as the betting system for  bidding the tickets as well as the royalties to the event organizer. Tickets are created in the form of NFTs for the Blockchain system and transparency.
 
 Key Features of the APP
+
+
 Fraud Prevention:
 NFT-based tickets are tamper-proof and verifiable on-chain, eliminating duplication or forgery.
 
