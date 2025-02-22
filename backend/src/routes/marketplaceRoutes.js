@@ -10,5 +10,5 @@ const router = express.Router();
 
 router.post("/list", authenticate, listTicket);
 router.post("/bid", authenticate, placeBid);
-router.post("/purchase", authenticate, purchaseTicket);
+router.post("/purchase/:listingId", authenticate, purchaseTicket);
 module.exports = router;

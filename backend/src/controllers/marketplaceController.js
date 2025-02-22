@@ -6,6 +6,13 @@ const { io } = require("../services/socketService");
 const listTicket = async (req, res) => {
   const { tokenId, price, expiration } = req.body;
   try {
+    // Validate input
+    if (!tokenId || !price || !expiration) {
+      return res
+        .status(400)
+        .json({ message: "Token ID, price, and expiration are required" });
+    }
+
     // Create listing in Supabase
     const { data: listing, error } = await supabase
       .from("marketplace_listings")
@@ -16,13 +23,27 @@ const listTicket = async (req, res) => {
           seller_address: req.user.walletAddress,
           expiration,
         },
-      ]);
+      ])
+      .select() // Add this to return the inserted data
+      .single(); // Add this to return a single object
 
-    if (error) throw error;
+    if (error) {
+      console.error("Supabase Insert Error:", error);
+      return res
+        .status(500)
+        .json({ message: "Error creating listing", error: error.message });
+    }
+
+    if (!listing) {
+      return res
+        .status(500)
+        .json({ message: "Listing creation failed: No data returned" });
+    }
 
     res.status(200).json({ listingId: listing.id, txPayload: "0x..." });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("List Ticket Error:", error);
+    res.status(500).json({ message: error.message || "Error listing ticket" });
   }
 };
 

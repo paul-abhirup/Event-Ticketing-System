@@ -1,5 +1,4 @@
 const http = require("http");
-const socketIo = require("socket.io");
 const app = require("./app");
 const { subClient } = require("./services/redisService");
 const { initializeSocket } = require("./services/socketService");
@@ -50,9 +49,9 @@ subClient.on("message", (channel, message) => {
 });
 
 // Start the server
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+const port = process.env.PORT || 3005;
+server.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
 
 // Export the `io` instance for use in other files
