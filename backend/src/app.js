@@ -12,10 +12,31 @@ const limiter = rateLimit({
   max: 100, // Limit each IP to 100 requests per windowMs
 });
 
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // limit each IP to 5 requests per windowMs
+});
+
+//logging requests
+const morgan = require("morgan");
+
+const helmet = require("helmet");
+
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(limiter);
+app.use(morgan("combined")); // Logs all requests
+app.use(helmet());
+
+// Apply to authentication routes
+app.use("/api/auth", authLimiter);
+
+//error handling globally
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: "Something went wrong!" });
+});
 
 // Routes
 app.use("/auth", require("./routes/authRoutes"));

@@ -1,5 +1,7 @@
 const { marketplace } = require("../services/blockchainService");
 const supabase = require("../services/supabaseService");
+const { pubClient } = require("../services/redisService");
+const { io } = require("../services/socketService");
 
 const listTicket = async (req, res) => {
   const { tokenId, price, expiration } = req.body;
@@ -27,6 +29,13 @@ const listTicket = async (req, res) => {
 const placeBid = async (req, res) => {
   const { tokenId, bidAmount } = req.body;
   try {
+    // Input validation
+    if (!tokenId || !bidAmount) {
+      return res.status(400).json({
+        message: "Token ID and bid amount are required",
+      });
+    }
+
     // Place bid in Supabase
     const { data: bid, error } = await supabase.from("bids").insert([
       {
@@ -38,9 +47,31 @@ const placeBid = async (req, res) => {
 
     if (error) throw error;
 
-    res.status(200).json({ bidNonce: bid.id, txData: "0x..." });
+    // Create bid update object
+    const bidUpdate = {
+      tokenId,
+      bidder: req.user.walletAddress,
+      amount: bidAmount,
+      timestamp: new Date().toISOString(),
+    };
+
+    // Emit bid update via WebSocket to all clients in the ticket's room
+    io.to(`ticket:${tokenId}`).emit("newBid", bidUpdate);
+
+    // Also publish to Redis for other server instances
+    await pubClient.publish(`ticket:${tokenId}`, JSON.stringify(bidUpdate));
+
+    res.status(200).json({
+      bidNonce: bid.id,
+      txData: "0x...",
+      bid: bidUpdate,
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Bid Error:", error);
+    res.status(500).json({
+      message: error.message || "Error placing bid",
+      error: process.env.NODE_ENV === "development" ? error : undefined,
+    });
   }
 };
 
