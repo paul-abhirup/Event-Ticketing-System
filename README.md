@@ -19,6 +19,8 @@ User-Friendly Design:
 Integrates familiar tools like wallets (MetaMask) with off-chain storage (Supabase) to provide a seamless experience even for non-crypto-savvy users.
 
 Advantages of Your Approach
+
+
 Combines the security and transparency of blockchain with the scalability of off-chain storage solutions like Supabase.
 
 Ensures fair pricing through enforced royalties and maximum resale price caps.
