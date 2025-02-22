@@ -15,7 +15,7 @@ io.on("connection", (socket) => {
 
   // Join a room for a specific ticket
   socket.on("joinTicketRoom", (tokenId) => {
-    socket.join(`ticket:${tokenId}`); // Join a room named after the ticket ID
+    socket.join(`ticket:${tokenId}`);
     console.log(`Client ${socket.id} joined room ticket:${tokenId}`);
   });
 

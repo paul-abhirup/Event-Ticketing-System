@@ -9,6 +9,7 @@ contract TicketNFT is ERC721, Ownable {
     string public baseURI; // State variable
     mapping(address => uint256) public ticketsPerWallet;
     uint256 public maxTicketsPerWallet;
+    mapping(uint256 => bool) private _isUsed;
 
     constructor(
         string memory _name, // Token name
@@ -35,4 +36,9 @@ contract TicketNFT is ERC721, Ownable {
     function _baseURI() internal view override returns (string memory) {
         return baseURI;
     }
+
+    function isUsed(uint256 tokenId) public view returns (bool) {
+    // Logic to check if the ticket is used
+    return _isUsed[tokenId];
+}
 }

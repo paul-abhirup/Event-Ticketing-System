@@ -67,6 +67,7 @@ const acceptBid = async (req, res) => {
 };
 
 const placeBid = async (req, res) => {
+  console.log("User:", req.user); // Log the user object
   if (!req.user?.walletAddress) {
     return res.status(401).json({ message: "Authentication required" });
   }
@@ -160,6 +161,6 @@ const getAuctionDetails = async (req, res) => {
 module.exports = {
   getBidHistory,
   acceptBid,
-  placeBid,
+  // placeBid,
   getAuctionDetails,
 };

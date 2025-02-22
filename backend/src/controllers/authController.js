@@ -144,11 +144,9 @@ const connectWallet = async (req, res) => {
       {
         walletAddress,
         iat: Math.floor(Date.now() / 1000),
+        exp: Math.floor(Date.now() / 1000) + 3 * 60 * 60, // 3 hours in seconds
       },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "1h",
-      }
+      process.env.JWT_SECRET
     );
 
     console.log("Generated token:", token);

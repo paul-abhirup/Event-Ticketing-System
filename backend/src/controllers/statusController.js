@@ -1,22 +1,27 @@
 const { ethers } = require("ethers");
 
+// Custom JSON serializer to handle BigInt
+function serializeBigInt(key, value) {
+  return typeof value === "bigint" ? value.toString() : value;
+}
+
 const getBlockchainStatus = async (req, res) => {
   try {
-    const provider = new ethers.providers.JsonRpcProvider(
-      process.env.BLOCKCHAIN_RPC_URL
-    );
-    const chainId = await provider
-      .getNetwork()
-      .then((network) => network.chainId);
+    const provider = new ethers.JsonRpcProvider(process.env.BLOCKCHAIN_RPC_URL);
+    const chainId = (await provider.getNetwork()).chainId;
     const latestBlock = await provider.getBlockNumber();
-    const gasPrice = await provider.getGasPrice();
+    const feeData = await provider.getFeeData();
 
-    res.status(200).json({
+    const response = {
       chainId,
       latestBlock,
-      gasPrice: gasPrice.toString(),
-    });
+      gasPrice: feeData.gasPrice, // This is a BigInt
+    };
+
+    // Use the custom serializer
+    res.status(200).send(JSON.stringify(response, serializeBigInt));
   } catch (error) {
+    console.error("Error in getBlockchainStatus:", error);
     res.status(500).json({ message: error.message });
   }
 };

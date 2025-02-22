@@ -9,6 +9,6 @@ const router = express.Router();
 
 // Protected routes
 router.get("/:address/tickets", authenticate, getUserTickets);
-router.get("/:address/activity", authenticate, getUserActivity);
+// router.get("/:address/activity", authenticate, getUserActivity);
 
 module.exports = router;

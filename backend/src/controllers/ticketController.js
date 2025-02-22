@@ -1,6 +1,7 @@
 const { ethers } = require("ethers");
 const supabase = require("../services/supabaseService");
 const TicketNFT = require("../TicketNFT.json");
+const { eventNames } = require("../app");
 
 // Add this at the top to debug
 console.log("Contract ABI:", TicketNFT.abi);
@@ -15,8 +16,30 @@ const mintTicket = async (req, res) => {
     });
 
     // Extract data from request body
-    const { quantity, recipientAddress } = req.body;
+    const { quantity, recipientAddress, event_id } = req.body;
     const walletAddress = req.user?.walletAddress;
+
+    // Validate event_id
+    if (!event_id) {
+      return res.status(400).json({
+        message: "Event ID is required",
+        debug: { receivedBody: req.body },
+      });
+    }
+
+    // Verify event exists in Supabase
+    const { data: event, error: eventError } = await supabase
+      .from("events")
+      .select("*")
+      .eq("id", event_id)
+      .single();
+
+    if (eventError || !event) {
+      return res.status(400).json({
+        message: "Invalid event ID or event not found",
+        debug: { event_id },
+      });
+    }
 
     // Validate wallet address
     if (!walletAddress) {
@@ -96,6 +119,7 @@ const mintTicket = async (req, res) => {
         const { error } = await supabase.from("tickets").insert({
           token_id: tokenId.toString(),
           owner_address: recipientAddress,
+          event_id: event_id,
           mint_date: new Date().toISOString(),
         });
 
@@ -120,6 +144,13 @@ const mintTicket = async (req, res) => {
       data: {
         txHashes,
         tokenIds,
+        event: {
+          id: event.id,
+          name: event.name,
+          date: event.date,
+        },
+        recipient: recipientAddress,
+        quantity: txHashes.length,
       },
     });
   } catch (error) {
@@ -133,6 +164,8 @@ const mintTicket = async (req, res) => {
 const getTicketDetails = async (req, res) => {
   const { tokenId } = req.params;
   try {
+    console.log("Fetching details for tokenId:", tokenId);
+
     // Initialize contract for reading
     const provider = new ethers.JsonRpcProvider(process.env.BLOCKCHAIN_RPC_URL);
     const contract = new ethers.Contract(
@@ -141,14 +174,28 @@ const getTicketDetails = async (req, res) => {
       provider
     );
 
-    // Fetch on-chain data
-    const owner = await contract.ownerOf(tokenId);
+    // Check if the token exists
+    let owner;
+    try {
+      owner = await contract.ownerOf(tokenId);
+    } catch (error) {
+      if (error.message.includes("ERC721NonexistentToken")) {
+        return res.status(404).json({ message: "Token does not exist" });
+      }
+      throw error;
+    }
+
+    console.log("Owner:", owner);
+
+    // Fetch isUsed status
     const isUsed = await contract.isUsed(tokenId);
+    console.log("Is Used:", isUsed);
 
     // Fetch off-chain data from Supabase
+    console.log("Fetching off-chain data for tokenId:", tokenId);
     const { data: ticket, error } = await supabase
       .from("tickets")
-      .select("*")
+      .select("*", "event_name")
       .eq("token_id", tokenId)
       .single();
 
@@ -157,11 +204,14 @@ const getTicketDetails = async (req, res) => {
     res.status(200).json({
       owner,
       eventId: ticket.event_id,
+      eventNames: ticket.event_name,
       seatInfo: ticket.seat_info,
       isUsed,
       mintDate: ticket.mint_date,
     });
+    // console.log(res);
   } catch (error) {
+    console.error("Error in getTicketDetails:", error);
     res.status(500).json({ message: error.message });
   }
 };

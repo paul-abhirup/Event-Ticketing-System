@@ -50,5 +50,5 @@ const initializeSocket = (server) => {
 
 module.exports = {
   initializeSocket,
-  getIO: () => io,
+  getIO: () => io, // Export the getIO function
 };
