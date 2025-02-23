@@ -6,6 +6,29 @@ Where data are stored on-chain as encrypted data. Consumers have full control ov
 
 🛠Built for KRACKHACK 2025
 
+## 🚀 Installation & Setup
+
+1. Clone the repository:
+ 
+   git clone https://github.com/paul-abhirup/Event-Ticketing-System
+
+   cd Even-Ticketing-System
+
+
+2. Install Dependencies:
+    
+   npm install
+
+   do this step in frontendAPP, backend, blockchain directory.
+
+
+4. Start the development server:
+    
+   npm run dev 
+
+
+5. Open http://localhost:3005/ in your browser.
+
 ## 🎥Demo
  
  Check out the live demo: website link here.
@@ -16,6 +39,85 @@ Where data are stored on-chain as encrypted data. Consumers have full control ov
  ![Screenshot_2]
  ![Screenshot_3]
  ![Screenshot_4]
+
+ ## Repository Structure
+    /repository-root
+│── backend
+│   ├── src
+│   │   ├── controllers/
+│   │   ├── middleware/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   ├── utils/
+│   │   ├── app.js
+│   │   ├── server.js
+│   │   ├── Marketplace.json
+│   │   ├── TicketNFT.json
+│   │   ├── package.json
+│   │   ├── package-lock.json
+│   │   ├── schema.sql
+│── blockchain
+│   ├── contracts/
+│   ├── ignition/
+│   ├── scripts/
+│   ├── test/
+│   ├── hardhat.config.js
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── README.md
+│── frontendAPP
+│   ├── src
+│   │   ├── components/
+│   │   ├── lib/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── types/
+│   │   ├── utils/
+│   │   ├── App.tsx
+│   │   ├── index.css
+│   │   ├── main.tsx
+│   │   ├── vite-env.d.ts
+│   ├── index.html
+│   ├── eslint.config.js
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── postcss.config.js
+│   ├── tailwind.config.js
+│   ├── tickets_rows.csv
+│   ├── tsconfig.app.json
+│   ├── tsconfig.json
+│   ├── tsconfig.node.json
+│   ├── vite.config.ts
+│── frontend-test/
+│── LICENSE
+│── .gitignore
+
+## Summary of Codebase
+1. Backend (backend/)
+Tech Stack: Node.js, Express.js, SQL
+Functionality:
+               Manages API routes, middleware, and services.
+               Handles ticket-related blockchain interactions.
+               Stores smart contract details in Marketplace.json and TicketNFT.json.
+               schema.sql suggests database integration.
+
+ 
+2. Blockchain (blockchain/)
+Tech Stack: Hardhat, Solidity
+Functionality:
+              Contains smart contracts, deployment scripts, and testing framework.
+              hardhat.config.js defines the blockchain development setup.
+
+   
+4. Frontend (frontendAPP/)
+Tech Stack: React (TypeScript), Vite, TailwindCSS
+Functionality:
+             Implements UI components, pages, and services for the app.
+             Uses TypeScript for type safety.
+             Configured with ESLint and PostCSS for styling.
+             Likely fetches data from the backend and interacts with blockchain smart contracts.
+
+   
 
  ## ✨Features
  🕵️Fraud Prevention: NFT-based tickets are tamper-proof and verifiable on-chain, sliminating duplication or forgery.
@@ -48,29 +150,6 @@ Where data are stored on-chain as encrypted data. Consumers have full control ov
  - **Real-Time:** Redis and Websocket
  - **Authentication:** Metamask Authentication and Supabase Authentication
 
-
- ## 🚀 Installation & Setup
-
- 1. Clone the repository:
- 
-    git clone https://github.com/paul-abhirup/Event-Ticketing-System
-
-    cd Even-Ticketing-System
-
-
- 2. Install Dependencies:
-    
-    npm install
-
-    do this step in frontendAPP, backend, blockchain directory.
-
-
- 4. Start the development server:
-    
-    npm run dev 
-
-
- 5. Open http://localhost:3005/ in your browser.
 
 
  ## 🏆 Team Members
