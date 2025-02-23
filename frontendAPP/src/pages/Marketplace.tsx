@@ -1,31 +1,31 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Tag, Clock, ArrowUpRight } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { Tag, Clock, ArrowUpRight } from "lucide-react";
 
 const Marketplace = () => {
-  // Placeholder data - would be fetched from API
-  const listings = [
-    {
-      id: 1,
-      eventName: "Cyber Night 2025",
-      ticketId: "#1234",
-      currentBid: "0.8 ETH",
-      timeLeft: "2 days",
-      image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1920&q=80",
-    },
-    {
-      id: 2,
-      eventName: "Digital Dreams Festival",
-      ticketId: "#5678",
-      currentBid: "0.5 ETH",
-      timeLeft: "4 hours",
-      image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1920&q=80",
-    },
-    // Add more listings as needed
-  ];
+  const [listings, setListings] = useState([]);
+
+  // Fetch listings from the backend
+  useEffect(() => {
+    const fetchListings = async () => {
+      try {
+        const response = await fetch("/marketplace/listings");
+        if (!response.ok) {
+          throw new Error("Failed to fetch listings");
+        }
+        const data = await response.json();
+        setListings(data);
+      } catch (error) {
+        console.error("Error fetching listings:", error);
+      }
+    };
+
+    fetchListings();
+  }, []);
 
   return (
     <div className="pt-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      {/* Marketplace Section */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -39,6 +39,7 @@ const Marketplace = () => {
         </button>
       </motion.div>
 
+      {/* Marketplace Listings */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {listings.map((listing, index) => (
           <motion.div
@@ -50,8 +51,8 @@ const Marketplace = () => {
           >
             <div className="relative h-48">
               <img
-                src={listing.image}
-                alt={listing.eventName}
+                src={`https://ipfs.io/ipfs/${listing.ipfs_cid}`} // Use IPFS hash to fetch image
+                alt={`Ticket ${listing.token_id}`}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
@@ -60,10 +61,10 @@ const Marketplace = () => {
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h3 className="text-xl font-semibold text-holo-white">
-                    {listing.eventName}
+                    Ticket #{listing.token_id}
                   </h3>
                   <p className="text-sm text-holo-white/70">
-                    Ticket {listing.ticketId}
+                    Seller: {listing.seller_address}
                   </p>
                 </div>
                 <button className="text-neon-blue hover:text-cyber-purple transition-colors">
@@ -74,18 +75,18 @@ const Marketplace = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <Tag className="w-4 h-4 mr-2 text-neon-blue" />
-                    <span>Current Bid</span>
+                    <span>Price</span>
                   </div>
                   <span className="text-neon-blue font-semibold">
-                    {listing.currentBid}
+                    {listing.price} ETH
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <Clock className="w-4 h-4 mr-2 text-neon-blue" />
-                    <span>Time Left</span>
+                    <span>Expires</span>
                   </div>
-                  <span>{listing.timeLeft}</span>
+                  <span>{new Date(listing.expiration).toLocaleString()}</span>
                 </div>
               </div>
               <div className="mt-4 grid grid-cols-2 gap-3">
@@ -105,3 +106,5 @@ const Marketplace = () => {
 };
 
 export default Marketplace;
+
+// `https://ipfs.io/ipfs/bafkreiavmyavtywzr2dmajs6r22u4povkbiubul4ux6jhs26qudz5yy3yy/${listing.image}`;
