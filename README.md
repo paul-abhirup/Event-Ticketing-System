@@ -47,53 +47,101 @@ Where data are stored on-chain as encrypted data. Consumers have full control ov
 
 /repository-root
 │── backend
+
 │   ├── src
+
 │   │   ├── controllers/
+
 │   │   ├── middleware/
+
 │   │   ├── routes/
+
 │   │   ├── services/
+
 │   │   ├── utils/
+
 │   │   ├── app.js
+
 │   │   ├── server.js
+
 │   │   ├── Marketplace.json
+
 │   │   ├── TicketNFT.json
+
 │   │   ├── package.json
+
 │   │   ├── package-lock.json
+
 │   │   ├── schema.sql
+
 │── blockchain
+
 │   ├── contracts/
+
 │   ├── ignition/
+
 │   ├── scripts/
+
 │   ├── test/
+
 │   ├── hardhat.config.js
+
 │   ├── package.json
+
 │   ├── package-lock.json
+
 │   ├── README.md
+
 │── frontendAPP
+
 │   ├── src
+
 │   │   ├── components/
+
 │   │   ├── lib/
+
 │   │   ├── pages/
+
 │   │   ├── services/
+
 │   │   ├── types/
+
 │   │   ├── utils/
+
 │   │   ├── App.tsx
+
 │   │   ├── index.css
+
 │   │   ├── main.tsx
+
 │   │   ├── vite-env.d.ts
+
 │   ├── index.html
+
 │   ├── eslint.config.js
+
 │   ├── package.json
+
 │   ├── package-lock.json
+
 │   ├── postcss.config.js
+
 │   ├── tailwind.config.js
+
 │   ├── tickets_rows.csv
+
 │   ├── tsconfig.app.json
+
 │   ├── tsconfig.json
+
 │   ├── tsconfig.node.json
+
 │   ├── vite.config.ts
+
 │── frontend-test/
+
 │── LICENSE
+
 │── .gitignore
 
 
