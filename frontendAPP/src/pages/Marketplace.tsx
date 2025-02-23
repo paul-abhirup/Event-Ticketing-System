@@ -4,6 +4,7 @@ import { Tag, Clock, ArrowUpRight, ExternalLink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import TicketDetailsModal from '../components/TicketDetailsModal';
 import PaymentModal from '../components/PaymentModal';
+import { toast } from "react-hot-toast";
 
 const Marketplace = () => {
   const navigate = useNavigate();
@@ -69,8 +70,18 @@ const Marketplace = () => {
   };
 
   const handleBuyNow = (listing: { token_id: number; price: number }) => {
-    setSelectedListing(listing);
-    setIsPaymentModalOpen(true);
+    try {
+      setSelectedListing(listing);
+      setIsPaymentModalOpen(true);
+    } catch (error) {
+      console.error('Buy now error:', error);
+      toast.error('Failed to process purchase');
+    }
+  };
+
+  const handleClosePaymentModal = () => {
+    setIsPaymentModalOpen(false);
+    setSelectedListing(null);
   };
 
   if (error) {
@@ -166,7 +177,7 @@ const Marketplace = () => {
                   Place Bid
                 </button>
                 <button 
-                  onClick={() => handleBuyNow({ token_id: listing.token_id, price: listing.price })}
+                  onClick={() => handleBuyNow(listing)}
                   className="px-4 py-2 bg-gradient-to-r from-neon-blue to-cyber-purple rounded-lg text-white font-medium hover:shadow-lg hover:shadow-neon-blue/50 transition-shadow"
                 >
                   Buy Now
@@ -190,7 +201,7 @@ const Marketplace = () => {
       {selectedListing && (
         <PaymentModal
           isOpen={isPaymentModalOpen}
-          onClose={() => setIsPaymentModalOpen(false)}
+          onClose={handleClosePaymentModal}
           amount={selectedListing.price}
           ticketId={selectedListing.token_id}
         />
