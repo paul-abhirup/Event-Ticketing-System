@@ -1,27 +1,99 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Ticket, Copy, ExternalLink } from 'lucide-react';
 import { useAccount } from 'wagmi';
+import { toast } from 'react-hot-toast';
+import { getAuthToken } from '../utils/auth';
+
+interface UserTicket {
+  token_id: number;
+  event_id: number;
+  owner_address: string;
+  event_name: string;
+  event_date: string;
+  ipfs_cid: string;
+  venue: string;
+  mint_date: string;
+  is_used: boolean;
+}
 
 const Profile = () => {
   const { address } = useAccount();
+  const [tickets, setTickets] = useState<UserTicket[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Placeholder data - would be fetched from API
-  const userTickets = [
-    {
-      id: 1,
-      eventName: "Cyber Night 2025",
-      ticketId: "#1234",
-      date: "2025-04-15",
-      image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1920&q=80",
-    },
-    // Add more tickets as needed
-  ];
+  useEffect(() => {
+    const fetchUserTickets = async () => {
+      if (!address) return;
+
+      try {
+        const token = getAuthToken();
+        const normalizedAddress = address.toLowerCase();
+        console.log('Fetching tickets for address:', normalizedAddress);
+        
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${normalizedAddress}/tickets`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/json',
+          },
+          credentials: 'include',
+        });
+
+        console.log('Response status:', response.status);
+        
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          console.error('Error response:', errorData);
+          throw new Error(errorData.message || 'Failed to fetch tickets');
+        }
+
+        const data = await response.json();
+        console.log('Fetched tickets:', data);
+        
+        if (Array.isArray(data) && data.length === 0) {
+          console.log('No tickets found for address:', normalizedAddress);
+        }
+        
+        setTickets(data);
+      } catch (error) {
+        console.error('Error fetching tickets:', error);
+        setError(error instanceof Error ? error.message : 'Failed to fetch tickets');
+        toast.error('Failed to load tickets');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (address) {
+      fetchUserTickets();
+    } else {
+      setIsLoading(false);
+    }
+  }, [address]);
 
   const copyAddress = () => {
-    navigator.clipboard.writeText(address || '');
-    // You would typically show a toast notification here
+    if (address) {
+      navigator.clipboard.writeText(address);
+      toast.success('Address copied to clipboard');
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="pt-20 px-4 text-center">
+        Loading tickets...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="pt-20 px-4 text-center text-red-500">
+        Error: {error}
+      </div>
+    );
+  }
 
   return (
     <div className="pt-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -47,9 +119,9 @@ const Profile = () => {
       <div className="mb-8">
         <h2 className="text-2xl font-semibold text-holo-white mb-6">My Tickets</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {userTickets.map((ticket, index) => (
+          {tickets.map((ticket, index) => (
             <motion.div
-              key={ticket.id}
+              key={ticket.token_id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
@@ -57,8 +129,8 @@ const Profile = () => {
             >
               <div className="relative h-48">
                 <img
-                  src={ticket.image}
-                  alt={ticket.eventName}
+                  src={`https://ipfs.io/ipfs/${ticket.ipfs_cid}`}
+                  alt={ticket.event_name}
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
@@ -67,10 +139,10 @@ const Profile = () => {
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="text-xl font-semibold text-holo-white">
-                      {ticket.eventName}
+                      {ticket.event_name}
                     </h3>
                     <p className="text-sm text-holo-white/70">
-                      Ticket {ticket.ticketId}
+                      Ticket #{ticket.token_id}
                     </p>
                   </div>
                   <button className="text-neon-blue hover:text-cyber-purple transition-colors">
@@ -79,14 +151,17 @@ const Profile = () => {
                 </div>
                 <div className="flex items-center text-sm text-holo-white/70 mb-4">
                   <Ticket className="w-4 h-4 mr-2 text-neon-blue" />
-                  <span>{ticket.date}</span>
+                  <span>{new Date(ticket.event_date).toLocaleDateString()}</span>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <button className="px-4 py-2 bg-neon-blue/10 rounded-lg text-neon-blue font-medium hover:bg-neon-blue/20 transition-colors">
                     View QR
                   </button>
-                  <button className="px-4 py-2 bg-gradient-to-r from-neon-blue to-cyber-purple rounded-lg text-white font-medium hover:shadow-lg hover:shadow-neon-blue/50 transition-shadow">
-                    Transfer
+                  <button 
+                    onClick={() => navigate(`/list-ticket?tokenId=${ticket.token_id}`)}
+                    className="px-4 py-2 bg-gradient-to-r from-neon-blue to-cyber-purple rounded-lg text-white font-medium hover:shadow-lg hover:shadow-neon-blue/50 transition-shadow"
+                  >
+                    List for Sale
                   </button>
                 </div>
               </div>

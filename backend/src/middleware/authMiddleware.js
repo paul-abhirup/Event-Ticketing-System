@@ -2,48 +2,35 @@ const jwt = require("jsonwebtoken");
 
 const authenticate = (req, res, next) => {
   try {
-    // Log the full authorization header
-    console.log("Auth header:", req.header("Authorization"));
-
-    const authHeader = req.header("Authorization");
+    // Get token from header
+    const authHeader = req.headers.authorization;
+    console.log('Auth header:', authHeader);
+    
     if (!authHeader) {
-      return res.status(401).json({
-        message: "Access denied. No token provided.",
-      });
+      return res.status(401).json({ message: 'Access denied. No token provided.' });
     }
 
-    // Ensure proper Bearer token format
-    if (!authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({
-        message: "Invalid token format. Must be 'Bearer <token>'",
-      });
+    // Check if it's a Bearer token
+    if (!authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ message: 'Invalid token format.' });
     }
 
-    const token = authHeader.replace("Bearer ", "").trim();
+    // Extract the token
+    const token = authHeader.split(' ')[1];
 
-    // Log the extracted token
-    console.log("Extracted token:", token);
+    if (!token) {
+      return res.status(401).json({ message: 'Access denied. No token provided.' });
+    }
 
+    // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    try {
-      // console.log("Decoded token:", decoded);
-      req.user = decoded;
-      next();
-    } catch (error) {
-      console.error("Token verification error:", error);
-      return res.status(401).json({
-        message: "Invalid token.",
-        error:
-          process.env.NODE_ENV === "development" ? error.message : undefined,
-      });
-    }
+    console.log('Decoded token:', decoded);
+    
+    req.user = decoded;
+    next();
   } catch (error) {
-    console.error("Auth Middleware Error:", error);
-    res.status(500).json({
-      message: "Authentication error",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
-    });
+    console.error('Auth Middleware Error:', error);
+    res.status(401).json({ message: 'Invalid token.' });
   }
 };
 

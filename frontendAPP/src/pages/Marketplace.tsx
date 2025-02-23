@@ -1,27 +1,74 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Tag, Clock, ArrowUpRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Marketplace = () => {
-  const [listings, setListings] = useState([]);
+  const navigate = useNavigate();
+  const [listings, setListings] = useState<{
+    id: number;
+    token_id: number;
+    price: number;
+    seller_address: string;
+    expiration: string;
+    ipfs_cid: string;
+  }[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch listings from the backend
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        const response = await fetch("/marketplace/listings");
-        if (!response.ok) {
-          throw new Error("Failed to fetch listings");
+        const token = localStorage.getItem('authToken');
+        
+        if (!token) {
+          setError('Please login first');
+          navigate('/login');
+          return;
         }
+
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/marketplace/listings`, {
+          credentials: 'include',
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          }
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ message: 'Failed to fetch listings' }));
+          throw new Error(errorData.message || 'Failed to fetch listings');
+        }
+        
         const data = await response.json();
         setListings(data);
       } catch (error) {
         console.error("Error fetching listings:", error);
+        setError(error instanceof Error ? error.message : 'Failed to fetch listings');
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchListings();
-  }, []);
+  }, [navigate]);
+
+  if (error) {
+    return (
+      <div className="pt-20 px-4 text-center text-red-500">
+        Error: {error}
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="pt-20 px-4 text-center">
+        Loading listings...
+      </div>
+    );
+  }
 
   return (
     <div className="pt-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -34,7 +81,10 @@ const Marketplace = () => {
         <h1 className="text-4xl font-bold bg-gradient-to-r from-neon-blue to-cyber-purple bg-clip-text text-transparent">
           Ticket Marketplace
         </h1>
-        <button className="px-4 py-2 bg-gradient-to-r from-neon-blue to-cyber-purple rounded-lg text-white font-medium hover:shadow-lg hover:shadow-neon-blue/50 transition-shadow">
+        <button
+          onClick={() => navigate("/list-ticket")}
+          className="px-4 py-2 bg-gradient-to-r from-neon-blue to-cyber-purple rounded-lg text-white font-medium hover:shadow-lg hover:shadow-neon-blue/50 transition-shadow"
+        >
           List Ticket
         </button>
       </motion.div>
@@ -50,11 +100,11 @@ const Marketplace = () => {
             className="bg-background/60 backdrop-blur-xl rounded-xl overflow-hidden border border-neon-blue/20 hover:border-neon-blue/40 transition-colors"
           >
             <div className="relative h-48">
-              <img
-                src={`https://ipfs.io/ipfs/${listing.ipfs_cid}`} // Use IPFS hash to fetch image
-                alt={`Ticket ${listing.token_id}`}
+            <img
+              src={`https://ipfs.io/ipfs/${listing.ipfs_cid}`} // Use IPFS hash to fetch image
+               alt={`Ticket ${listing.token_id}`}
                 className="w-full h-full object-cover"
-              />
+               />
               <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
             </div>
             <div className="p-6">
