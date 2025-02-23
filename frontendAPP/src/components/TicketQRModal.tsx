@@ -1,4 +1,4 @@
-import React from 'react';
+import { type ReactNode } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';

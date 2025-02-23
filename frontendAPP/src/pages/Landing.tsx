@@ -1,11 +1,22 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Ticket, Shield, Banknote, Calendar, Zap, Gift, Lock } from 'lucide-react';
+import { Ticket, Shield, Banknote, Calendar, Zap, Gift, Lock, MapPin, Clock } from 'lucide-react';
 import { useInView } from 'react-intersection-observer';
+import PaymentModal from '../components/PaymentModal';
 import FeatureTile from '../components/FeatureTile';
 import BenefitTile from '../components/BenefitTile';
 import Footer from '../components/Footer';
+import { toast } from 'react-hot-toast';
+
+interface Event {
+  id: number;
+  name: string;
+  date: string;
+  venue: string;
+  price: number;
+  image_url: string;
+}
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -21,6 +32,39 @@ const Landing = () => {
   });
 
   const benefitsControls = useAnimation();
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState<{
+    id: number;
+    price: number;
+  } | null>(null);
+
+  // Example upcoming events data
+  const upcomingEvents: Event[] = [
+    {
+      id: 1,
+      name: "Cyber Music Festival 2024",
+      date: "2024-04-15",
+      venue: "Neo Tokyo Arena",
+      price: 0.5,
+      image_url: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      id: 2,
+      name: "Digital Art Exhibition",
+      date: "2024-04-20",
+      venue: "Virtual Gallery",
+      price: 0.3,
+      image_url: "https://images.unsplash.com/photo-1550684376-efcbd6e3f031?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      id: 3,
+      name: "Tech Conference 2024",
+      date: "2024-05-01",
+      venue: "Cyber Convention Center",
+      price: 0.8,
+      image_url: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=80"
+    }
+  ];
 
   useEffect(() => {
     if (inView) {
@@ -40,6 +84,24 @@ const Landing = () => {
     
     // Navigate to dashboard if authenticated, otherwise to login
     navigate(isAuthenticated ? '/dashboard' : '/login');
+  };
+
+  const handleBuyNow = (event: Event) => {
+    try {
+      setSelectedTicket({
+        id: event.id,
+        price: event.price
+      });
+      setIsPaymentModalOpen(true);
+    } catch (error) {
+      console.error('Buy now error:', error);
+      toast.error('Failed to process purchase');
+    }
+  };
+
+  const handleClosePaymentModal = () => {
+    setIsPaymentModalOpen(false);
+    setSelectedTicket(null);
   };
 
   return (
@@ -218,6 +280,80 @@ const Landing = () => {
 
       {/* Decorative elements */}
       <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1920&q=80')] opacity-10 mix-blend-overlay" />
+
+      {/* Upcoming Events Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-4xl font-bold bg-gradient-to-r from-neon-blue to-cyber-purple bg-clip-text text-transparent mb-12">
+            Upcoming Events
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {upcomingEvents.map((event) => (
+              <motion.div
+                key={event.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-background/60 backdrop-blur-xl rounded-xl overflow-hidden border border-neon-blue/20 hover:border-neon-blue/40 transition-colors"
+              >
+                <div className="relative h-48">
+                  <img
+                    src={event.image_url}
+                    alt={event.name}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
+                </div>
+
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-holo-white mb-2">
+                    {event.name}
+                  </h3>
+
+                  <div className="space-y-2 text-sm text-holo-white/70 mb-4">
+                    <div className="flex items-center">
+                      <Calendar className="w-4 h-4 mr-2 text-neon-blue" />
+                      <span>{new Date(event.date).toLocaleDateString()}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <MapPin className="w-4 h-4 mr-2 text-neon-blue" />
+                      <span>{event.venue}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <Clock className="w-4 h-4 mr-2 text-neon-blue" />
+                      <span>{event.price} ETH</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 grid grid-cols-2 gap-3">
+                    <button 
+                      className="px-4 py-2 bg-neon-blue/10 rounded-lg text-neon-blue font-medium hover:bg-neon-blue/20 transition-colors"
+                    >
+                      Learn More
+                    </button>
+                    <button 
+                      onClick={() => handleBuyNow(event)}
+                      className="px-4 py-2 bg-gradient-to-r from-neon-blue to-cyber-purple rounded-lg text-white font-medium hover:shadow-lg hover:shadow-neon-blue/50 transition-shadow"
+                    >
+                      Buy Now
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Payment Modal */}
+      {selectedTicket && (
+        <PaymentModal
+          isOpen={isPaymentModalOpen}
+          onClose={handleClosePaymentModal}
+          amount={selectedTicket.price}
+          ticketId={selectedTicket.id}
+        />
+      )}
     </div>
   );
 };

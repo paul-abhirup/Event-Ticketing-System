@@ -1,6 +1,13 @@
-import React, { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Wallet, CreditCard, QrCode, Bank, ChevronRight } from 'lucide-react';
+import { 
+  X, 
+  Wallet as WalletIcon,
+  CreditCard, 
+  QrCode, 
+  Building2 as BankIcon,
+  ChevronRight 
+} from 'lucide-react';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -11,7 +18,7 @@ interface PaymentModalProps {
 
 type PaymentMethod = 'crypto' | 'card' | 'qr' | 'bank';
 
-const PaymentModal = ({ isOpen, onClose, amount, ticketId }: PaymentModalProps) => {
+const PaymentModal = ({ isOpen, onClose, amount, ticketId }: PaymentModalProps): ReactNode => {
   const [step, setStep] = useState<'method' | 'details'>('method');
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null);
 
@@ -19,7 +26,7 @@ const PaymentModal = ({ isOpen, onClose, amount, ticketId }: PaymentModalProps) 
     {
       id: 'crypto' as PaymentMethod,
       name: 'Crypto Wallet',
-      icon: Wallet,
+      icon: WalletIcon,
       description: 'Pay with ETH, BTC, or other cryptocurrencies'
     },
     {
@@ -37,7 +44,7 @@ const PaymentModal = ({ isOpen, onClose, amount, ticketId }: PaymentModalProps) 
     {
       id: 'bank' as PaymentMethod,
       name: 'Bank Transfer',
-      icon: Bank,
+      icon: BankIcon,
       description: 'Direct bank transfer'
     }
   ];
@@ -70,36 +77,34 @@ const PaymentModal = ({ isOpen, onClose, amount, ticketId }: PaymentModalProps) 
             initial={{ scale: 0.95, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 20 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-lg bg-background/90 backdrop-blur-xl p-6 rounded-2xl border border-neon-blue/30 shadow-xl shadow-neon-blue/10 z-50"
+            className="fixed left-[35%] top-[30%] -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-lg bg-background/90 backdrop-blur-xl p-6 rounded-2xl border border-neon-blue/30 shadow-xl shadow-neon-blue/10 z-50"
           >
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-neon-blue to-cyber-purple bg-clip-text text-transparent">
-                {step === 'method' ? 'Select Payment Method' : 'Payment Details'}
-              </h3>
+              <div>
+                <h3 className="text-2xl font-bold bg-gradient-to-r from-neon-blue to-cyber-purple bg-clip-text text-transparent">
+                  {step === 'method' ? 'Select Payment Method' : 'Payment Details'}
+                </h3>
+                <p className="text-holo-white/70 text-sm mt-1">
+                  Amount: {amount} ETH
+                </p>
+              </div>
               <button
                 onClick={onClose}
-                className="text-holo-white/70 hover:text-holo-white transition-colors"
+                className="p-2 hover:bg-white/5 rounded-lg transition-colors"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5 text-holo-white/70" />
               </button>
             </div>
 
-            {/* Amount Display */}
-            <div className="mb-6 p-4 rounded-xl bg-background/50 border border-neon-blue/20">
-              <p className="text-sm text-holo-white/70">Total Amount</p>
-              <p className="text-2xl font-bold text-neon-blue">{amount} ETH</p>
-              <p className="text-sm text-holo-white/50">Ticket #{ticketId}</p>
-            </div>
-
+            {/* Content */}
             {step === 'method' ? (
-              // Payment Method Selection
               <div className="space-y-3">
                 {paymentMethods.map((method) => (
                   <motion.button
                     key={method.id}
                     onClick={() => handleMethodSelect(method.id)}
-                    className="w-full p-4 rounded-xl bg-background/50 border border-neon-blue/20 hover:border-neon-blue/40 group transition-all flex items-center justify-between"
+                    className="w-full p-4 bg-background/60 border border-neon-blue/20 rounded-xl hover:border-neon-blue/40 hover:bg-neon-blue/5 transition-all group flex items-center justify-between"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
