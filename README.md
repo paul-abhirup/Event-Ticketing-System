@@ -23,13 +23,14 @@ Where data are stored on-chain as encrypted data. Consumers have full control ov
 
    do this step in frontendAPP, backend, blockchain directory.
 
-
-4. Start the development server:
+3. Add .env file 
+   
+5. Start the development server:
     
    npm run dev 
 
 
-5. Open http://localhost:3005/ in your browser.
+6. Open http://localhost:3005/ in your browser.
 
 ## 🎥Demo
  
