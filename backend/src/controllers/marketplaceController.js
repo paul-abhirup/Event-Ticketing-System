@@ -1,3 +1,4 @@
+const { ethers } = require("ethers"); // Import ethers library
 const { marketplace } = require("../services/blockchainService");
 const supabase = require("../services/supabaseService");
 const { pubClient } = require("../services/redisService");
@@ -182,6 +183,11 @@ const placeBid = async (req, res) => {
 const purchaseTicket = async (req, res) => {
   const { id } = req.params;
   try {
+    // Validate listing ID
+    if (!id) {
+      return res.status(400).json({ message: "Listing ID is required" });
+    }
+
     // Fetch listing details from Supabase
     const { data: listing, error } = await supabase
       .from("marketplace_listings")
@@ -200,10 +206,17 @@ const purchaseTicket = async (req, res) => {
       return res.status(404).json({ message: "Listing not found" });
     }
 
+    // Log listing details
+    console.log("Listing:", listing);
+    console.log("Buyer Address:", req.user.walletAddress);
+    console.log("Value Sent (ETH):", listing.price);
+
+    // Convert price from ETH to wei
+    const valueInWei = ethers.utils.parseEther(listing.price.toString());
+
     // Execute purchase on-chain
     const tx = await marketplace.buyTicket(listing.token_id, {
-      // Use buyTicket instead of purchaseTicket
-      value: listing.price,
+      value: valueInWei, // Pass the value in wei
     });
     await tx.wait();
 
@@ -220,7 +233,7 @@ const purchaseTicket = async (req, res) => {
         .json({ message: "Error updating ticket ownership" });
     }
 
-    // Mark the listing as sold (optional)
+    // Mark the listing as sold by deleting it
     const { error: deleteError } = await supabase
       .from("marketplace_listings")
       .delete()
@@ -239,5 +252,4 @@ const purchaseTicket = async (req, res) => {
       .json({ message: error.message || "Error purchasing ticket" });
   }
 };
-
 module.exports = { listTicket, placeBid, purchaseTicket };
