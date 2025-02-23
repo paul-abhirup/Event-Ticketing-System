@@ -11,6 +11,7 @@
     "mocha": "^11.1.0"
   },
   "dependencies": {
+    "react-hot-toast": "^2.5.2",
     "solc": "^0.8.20"
   },
   "name": "blockchain",

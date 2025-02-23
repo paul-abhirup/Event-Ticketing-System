@@ -163,56 +163,61 @@ const mintTicket = async (req, res) => {
 
 const getTicketDetails = async (req, res) => {
   const { tokenId } = req.params;
+  
   try {
-    console.log("Fetching details for tokenId:", tokenId);
+    console.log('Fetching details for ticket:', tokenId);
 
-    // Initialize contract for reading
-    const provider = new ethers.JsonRpcProvider(process.env.BLOCKCHAIN_RPC_URL);
-    const contract = new ethers.Contract(
-      process.env.TICKET_NFT_ADDRESS,
-      TicketNFT.abi,
-      provider
-    );
-
-    // Check if the token exists
-    let owner;
-    try {
-      owner = await contract.ownerOf(tokenId);
-    } catch (error) {
-      if (error.message.includes("ERC721NonexistentToken")) {
-        return res.status(404).json({ message: "Token does not exist" });
-      }
-      throw error;
-    }
-
-    console.log("Owner:", owner);
-
-    // Fetch isUsed status
-    const isUsed = await contract.isUsed(tokenId);
-    console.log("Is Used:", isUsed);
-
-    // Fetch off-chain data from Supabase
-    console.log("Fetching off-chain data for tokenId:", tokenId);
+    // Fetch ticket with event details
     const { data: ticket, error } = await supabase
       .from("tickets")
-      .select("*", "event_name")
+      .select(`
+        token_id,
+        owner_address,
+        mint_date,
+        is_used,
+        events (
+          name,
+          date,
+          ipfs_cid,
+          venue
+        )
+      `)
       .eq("token_id", tokenId)
       .single();
 
-    if (error) throw error;
+    console.log('Ticket query response:', { ticket, error });
 
-    res.status(200).json({
-      owner,
-      eventId: ticket.event_id,
-      eventNames: ticket.event_name,
-      seatInfo: ticket.seat_info,
-      isUsed,
-      mintDate: ticket.mint_date,
-    });
-    // console.log(res);
+    if (error) {
+      console.error("Error fetching ticket:", error);
+      return res.status(500).json({ 
+        message: "Error fetching ticket details",
+        error: error.message 
+      });
+    }
+
+    if (!ticket) {
+      return res.status(404).json({ message: "Ticket not found" });
+    }
+
+    // Format the response
+    const ticketDetails = {
+      token_id: ticket.token_id,
+      owner_address: ticket.owner_address,
+      event_name: ticket.events?.name || 'Unknown Event',
+      event_date: ticket.events?.date || null,
+      venue: ticket.events?.venue || '',
+      ipfs_cid: ticket.events?.ipfs_cid || '',
+      mint_date: ticket.mint_date,
+      is_used: ticket.is_used
+    };
+
+    res.status(200).json(ticketDetails);
   } catch (error) {
-    console.error("Error in getTicketDetails:", error);
-    res.status(500).json({ message: error.message });
+    console.error("Server error:", error);
+    res.status(500).json({ 
+      message: "Internal server error",
+      error: error.message 
+    });
   }
 };
 

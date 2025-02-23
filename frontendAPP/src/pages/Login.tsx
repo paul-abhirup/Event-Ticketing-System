@@ -13,6 +13,7 @@ import { ethers } from "ethers";
 import axios from "axios";
 import { Wallet } from "lucide-react";
 import { supabase } from "../lib/supabaseClient"; // Import Supabase client
+import { setAuthToken } from '../utils/auth';
 
 const API_URL = import.meta.env.REACT_APP_API_URL || "http://localhost:3005";
 
@@ -95,7 +96,7 @@ const Login = () => {
       // Store the token properly
       const { token } = authResponse.data.data;
       console.log("Received token:", token);
-      localStorage.setItem("token", token);
+      setAuthToken(token);
 
       // Redirect to the dashboard
       navigate("/dashboard");

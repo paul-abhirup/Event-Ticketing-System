@@ -6,12 +6,24 @@ const { getIO } = require("../services/socketService"); // Import getIO
 
 const listTicket = async (req, res) => {
   const { tokenId, price, expiration } = req.body;
+  const sellerAddress = req.user.walletAddress; // Get seller's address from authenticated user
+
   try {
     // Validate input
     if (!tokenId || !price || !expiration) {
-      return res
-        .status(400)
-        .json({ message: "Token ID, price, and expiration are required" });
+      return res.status(400).json({ message: "Token ID, price, and expiration are required" });
+    }
+
+    // Check if the ticket exists and is owned by the seller
+    const { data: ticket, error: ticketError } = await supabase
+      .from("tickets")
+      .select("*")
+      .eq("token_id", tokenId)
+      .eq("owner_address", sellerAddress)
+      .single();
+
+    if (ticketError || !ticket) {
+      return res.status(404).json({ message: "Ticket not found or you do not own this ticket" });
     }
 
     // Check if the ticket is already listed
@@ -22,9 +34,7 @@ const listTicket = async (req, res) => {
 
     if (listingError) {
       console.error("Supabase Query Error:", listingError);
-      return res
-        .status(500)
-        .json({ message: "Error checking existing listings" });
+      return res.status(500).json({ message: "Error checking existing listings" });
     }
 
     if (existingListing && existingListing.length > 0) {
@@ -38,24 +48,20 @@ const listTicket = async (req, res) => {
         {
           token_id: tokenId,
           price,
-          seller_address: req.user.walletAddress,
+          seller_address: sellerAddress,
           expiration,
         },
       ])
-      .select() // Add this to return the inserted data
-      .single(); // Add this to return a single object
+      .select()
+      .single();
 
     if (error) {
       console.error("Supabase Insert Error:", error);
-      return res
-        .status(500)
-        .json({ message: "Error creating listing", error: error.message });
+      return res.status(500).json({ message: "Error creating listing", error: error.message });
     }
 
     if (!listing) {
-      return res
-        .status(500)
-        .json({ message: "Listing creation failed: No data returned" });
+      return res.status(500).json({ message: "Listing creation failed: No data returned" });
     }
 
     res.status(200).json({ listingId: listing.id, txPayload: "0x..." });
@@ -254,35 +260,52 @@ const purchaseTicket = async (req, res) => {
 };
 
 const getAllListings = async (req, res) => {
+  console.log("Fetching listings...");
   try {
-    // Fetch all listings with ticket and event details
-    const { data: listings, error } = await supabase.from(
-      "marketplace_listings"
-    ).select(`
+    // Fetch all active listings (not expired and not sold)
+    const { data: listings, error } = await supabase
+      .from("marketplace_listings")
+      .select(`
         *,
         tickets:token_id (
           event_id,
           events:event_id (
-            image_ipfs_hash
+            ipfs_cid
           )
         )
-      `);
+      `)
+      .gt('expiration', new Date().toISOString())
+      .order('created_at', { ascending: false });
+
+    console.log("Supabase response:", { listings, error });
 
     if (error) {
       console.error("Supabase Query Error:", error);
-      return res.status(500).json({ message: "Error fetching listings" });
+      return res.status(500).json({ 
+        message: "Error fetching listings",
+        error: error.message 
+      });
     }
 
     // Format the data to include event image IPFS hash
     const formattedListings = listings.map((listing) => ({
-      ...listing,
-      eventImageIpfsHash: listing.tickets.events.image_ipfs_hash,
+      id: listing.id,
+      token_id: listing.token_id,
+      price: listing.price,
+      seller_address: listing.seller_address,
+      expiration: listing.expiration,
+      ipfs_cid: listing.tickets?.events?.ipfs_cid || '', // Correctly extract ipfs_cid
+      created_at: listing.created_at
     }));
 
+    console.log("Sending formatted listings:", formattedListings);
     res.status(200).json(formattedListings);
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ 
+      message: "Internal server error",
+      error: error.message 
+    });
   }
 };
 

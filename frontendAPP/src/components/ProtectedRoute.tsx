@@ -1,16 +1,13 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { useAccount } from "wagmi";
+import { isAuthenticated } from '../utils/auth';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isConnected } = useAccount();
-  const token = localStorage.getItem("token");
-
-  if (!isConnected || !token) {
+  if (!isAuthenticated()) {
     return <Navigate to="/login" replace />;
   }
 
-  return children;
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;

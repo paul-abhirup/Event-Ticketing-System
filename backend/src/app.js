@@ -23,9 +23,17 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 
 const authRoutes = require("./routes/authRoutes");
+const marketplaceRoutes = require('./routes/marketplaceRoutes');
+const userRoutes = require("./routes/userRoutes");
+const ticketRoutes = require("./routes/ticketRoutes");
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(limiter);
@@ -36,13 +44,19 @@ app.use(helmet());
 // app.use("/api/auth", authLimiter);
 
 // Routes
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
 app.use("/auth", authRoutes);
 app.use("/tickets", require("./routes/ticketRoutes"));
-app.use("/marketplace", require("./routes/marketplaceRoutes"));
+app.use("/api/marketplace", marketplaceRoutes);
 app.use("/events", require("./routes/eventRoutes"));
-app.use("/users", require("./routes/userRoutes"));
+app.use("/api/users", userRoutes);
 app.use("/status", require("./routes/statusRoutes"));
 app.use("/auction", require("./routes/auctionRoutes"));
+app.use("/api/tickets", ticketRoutes);
 
 // Error handlers
 app.use((err, req, res, next) => {
@@ -58,7 +72,7 @@ app.use((err, req, res, next) => {
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ message: "Something went wrong!" });
+  res.status(500).json({ message: 'Something broke!' });
 });
 
 // 404 handler

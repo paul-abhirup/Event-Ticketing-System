@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import Marketplace from "./pages/Marketplace";
 import Profile from "./pages/Profile";
 import TicketDetails from "./pages/TicketDetails";
+import ListTicket from "./pages/ListTicket";
 
 // Components
 import Navigation from "./components/Navigation";
@@ -56,6 +57,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <TicketDetails />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/list-ticket"
+                element={
+                  <ProtectedRoute>
+                    <ListTicket />
                   </ProtectedRoute>
                 }
               />
