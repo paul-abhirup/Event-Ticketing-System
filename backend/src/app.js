@@ -25,6 +25,7 @@ const helmet = require("helmet");
 const authRoutes = require("./routes/authRoutes");
 const marketplaceRoutes = require('./routes/marketplaceRoutes');
 const userRoutes = require("./routes/userRoutes");
+const ticketRoutes = require("./routes/ticketRoutes");
 
 // Middleware
 app.use(cors({
@@ -55,6 +56,7 @@ app.use("/events", require("./routes/eventRoutes"));
 app.use("/api/users", userRoutes);
 app.use("/status", require("./routes/statusRoutes"));
 app.use("/auction", require("./routes/auctionRoutes"));
+app.use("/api/tickets", ticketRoutes);
 
 // Error handlers
 app.use((err, req, res, next) => {

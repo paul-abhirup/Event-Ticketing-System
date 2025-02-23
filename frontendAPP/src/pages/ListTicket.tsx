@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast"; // Make sure to install react-hot-toast if not already installed
 
 interface ListingFormData {
@@ -11,6 +11,7 @@ interface ListingFormData {
 
 const ListTicket = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [formData, setFormData] = useState<ListingFormData>({
     tokenId: "",
     price: "",
@@ -26,6 +27,18 @@ const ListTicket = () => {
       navigate('/login');
     }
   }, [navigate]);
+
+  // Add this useEffect to handle query params
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tokenId = params.get('tokenId');
+    if (tokenId) {
+      setFormData(prev => ({
+        ...prev,
+        tokenId: tokenId
+      }));
+    }
+  }, [location.search]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -115,6 +128,7 @@ const ListTicket = () => {
             onChange={handleInputChange}
             className="w-full px-4 py-2 bg-background/60 border border-neon-blue/20 rounded-lg focus:outline-none focus:border-neon-blue text-holo-white"
             required
+            readOnly={!!location.search}
           />
         </div>
 

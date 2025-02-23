@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Tag, Clock, ArrowUpRight } from "lucide-react";
+import { Tag, Clock, ArrowUpRight, ExternalLink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import TicketDetailsModal from '../components/TicketDetailsModal';
 
 const Marketplace = () => {
   const navigate = useNavigate();
@@ -15,6 +16,8 @@ const Marketplace = () => {
   }[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
   // Fetch listings from the backend
   useEffect(() => {
@@ -53,6 +56,11 @@ const Marketplace = () => {
 
     fetchListings();
   }, [navigate]);
+
+  const handleTicketClick = (tokenId: number) => {
+    setSelectedTicketId(tokenId);
+    setIsDetailsModalOpen(true);
+  };
 
   if (error) {
     return (
@@ -117,8 +125,11 @@ const Marketplace = () => {
                     Seller: {listing.seller_address}
                   </p>
                 </div>
-                <button className="text-neon-blue hover:text-cyber-purple transition-colors">
-                  <ArrowUpRight className="w-6 h-6" />
+                <button 
+                  onClick={() => handleTicketClick(listing.token_id)}
+                  className="text-neon-blue hover:text-cyber-purple transition-colors"
+                >
+                  <ExternalLink className="w-6 h-6" />
                 </button>
               </div>
               <div className="space-y-3 text-sm text-holo-white/70">
@@ -151,6 +162,15 @@ const Marketplace = () => {
           </motion.div>
         ))}
       </div>
+
+      {/* Add the details modal */}
+      {selectedTicketId && (
+        <TicketDetailsModal
+          isOpen={isDetailsModalOpen}
+          onClose={() => setIsDetailsModalOpen(false)}
+          tokenId={selectedTicketId}
+        />
+      )}
     </div>
   );
 };

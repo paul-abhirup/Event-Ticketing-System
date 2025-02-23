@@ -4,6 +4,9 @@ import { Ticket, Copy, ExternalLink } from 'lucide-react';
 import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
 import { getAuthToken } from '../utils/auth';
+import { useNavigate } from 'react-router-dom';
+import TicketQRModal from '../components/TicketQRModal';
+import TicketDetailsModal from '../components/TicketDetailsModal';
 
 interface UserTicket {
   token_id: number;
@@ -19,9 +22,14 @@ interface UserTicket {
 
 const Profile = () => {
   const { address } = useAccount();
+  const navigate = useNavigate();
   const [tickets, setTickets] = useState<UserTicket[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedTicket, setSelectedTicket] = useState<UserTicket | null>(null);
+  const [isQRModalOpen, setIsQRModalOpen] = useState(false);
+  const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserTickets = async () => {
@@ -77,6 +85,20 @@ const Profile = () => {
       navigator.clipboard.writeText(address);
       toast.success('Address copied to clipboard');
     }
+  };
+
+  const handleListTicket = (tokenId: number) => {
+    navigate(`/list-ticket?tokenId=${tokenId}`);
+  };
+
+  const handleViewQR = (ticket: UserTicket) => {
+    setSelectedTicket(ticket);
+    setIsQRModalOpen(true);
+  };
+
+  const handleTicketClick = (tokenId: number) => {
+    setSelectedTicketId(tokenId);
+    setIsDetailsModalOpen(true);
   };
 
   if (isLoading) {
@@ -145,7 +167,10 @@ const Profile = () => {
                       Ticket #{ticket.token_id}
                     </p>
                   </div>
-                  <button className="text-neon-blue hover:text-cyber-purple transition-colors">
+                  <button 
+                    onClick={() => handleTicketClick(ticket.token_id)}
+                    className="text-neon-blue hover:text-cyber-purple transition-colors"
+                  >
                     <ExternalLink className="w-6 h-6" />
                   </button>
                 </div>
@@ -154,11 +179,14 @@ const Profile = () => {
                   <span>{new Date(ticket.event_date).toLocaleDateString()}</span>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                  <button className="px-4 py-2 bg-neon-blue/10 rounded-lg text-neon-blue font-medium hover:bg-neon-blue/20 transition-colors">
+                  <button 
+                    onClick={() => handleViewQR(ticket)}
+                    className="px-4 py-2 bg-neon-blue/10 rounded-lg text-neon-blue font-medium hover:bg-neon-blue/20 transition-colors"
+                  >
                     View QR
                   </button>
                   <button 
-                    onClick={() => navigate(`/list-ticket?tokenId=${ticket.token_id}`)}
+                    onClick={() => handleListTicket(ticket.token_id)}
                     className="px-4 py-2 bg-gradient-to-r from-neon-blue to-cyber-purple rounded-lg text-white font-medium hover:shadow-lg hover:shadow-neon-blue/50 transition-shadow"
                   >
                     List for Sale
@@ -169,6 +197,28 @@ const Profile = () => {
           ))}
         </div>
       </div>
+
+      {/* QR Modal */}
+      {selectedTicket && (
+        <TicketQRModal
+          isOpen={isQRModalOpen}
+          onClose={() => setIsQRModalOpen(false)}
+          ticketData={{
+            owner_address: selectedTicket.owner_address,
+            event_id: selectedTicket.event_id.toString(),
+            event_name: selectedTicket.event_name
+          }}
+        />
+      )}
+
+      {/* Details Modal */}
+      {selectedTicketId && (
+        <TicketDetailsModal
+          isOpen={isDetailsModalOpen}
+          onClose={() => setIsDetailsModalOpen(false)}
+          tokenId={selectedTicketId}
+        />
+      )}
     </div>
   );
 };
