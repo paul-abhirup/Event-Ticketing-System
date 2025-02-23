@@ -253,8 +253,6 @@ const purchaseTicket = async (req, res) => {
   }
 };
 
-// const supabase = require("../services/supabaseService");
-
 const getAllListings = async (req, res) => {
   try {
     // Fetch all listings with ticket and event details
@@ -288,5 +286,4 @@ const getAllListings = async (req, res) => {
   }
 };
 
-module.exports = { getAllListings };
 module.exports = { listTicket, placeBid, purchaseTicket, getAllListings };
