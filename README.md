@@ -1,6 +1,7 @@
 # 🚀Event-Ticketing-System.
 
 A blockchain-powered platform to manage the event ticketing system.
+
 Where data are stored on-chain as encrypted data. Consumers have full control over the transparency of the tickets as well as the betting system for bidding the tickets as well as the royalties to the event organizer. Tickets are created in the form of NFTs for the Blockchain system and transparency.
 
 🛠Built for KRACKHACK 2025
@@ -8,6 +9,7 @@ Where data are stored on-chain as encrypted data. Consumers have full control ov
 ## 🎥Demo
  
  Check out the live demo: website link here.
+
  Watch our demo video: youtube video here.
 
  ![Screenshot_1]
@@ -17,11 +19,24 @@ Where data are stored on-chain as encrypted data. Consumers have full control ov
 
  ## ✨Features
  🕵️Fraud Prevention: NFT-based tickets are tamper-proof and verifiable on-chain, sliminating duplication or forgery.
+
  💵Fair Pricing: Smart contracts enfore maximum resale prices and royalties to prevent scalping while ensuring fair comensation for organizers.
+
  📢Transparency: All transactions are recorded on the blockchain and are publicly verifiable.
+ 
  ⛓️Decentralization: The system removes reliance on centralized platforms by enabling direct interactions between users via smart contracts.
+
  🎨User-Friendly Design: Integrates familiar tools like wallets (MetaMask) with off-chain storage(supabase) to provide a seamless experience even for non-crypto-savy users.
 
+ 🔒Security: The system uses Metamask for authentication and Supabase for off-chain storage, ensuring a secure and reliable platform.
+
+ 📦Scalability: The system is designed to handle a large number of users and transactions, making it suitable for large-scale events.
+
+ ## System Architecture
+
+![system architecture](https://github.com/user-attachments/assets/ab88bb7c-4fc1-488a-9ed4-5e3da16bbd22)
+
+ 
 
  ## 🛠Tech Stack
  - **Frontend:** React, Tailwind CSS
@@ -36,7 +51,9 @@ Where data are stored on-chain as encrypted data. Consumers have full control ov
  ## 🚀 Installation & Setup
 
  1. Clone the repository:
+ 
     git clone https://github.com/paul-abhirup/Event-Ticketing-System
+
     cd Even-Ticketing-System
 
 
