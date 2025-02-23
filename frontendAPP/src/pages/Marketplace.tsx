@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Tag, Clock, ArrowUpRight, ExternalLink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import TicketDetailsModal from '../components/TicketDetailsModal';
+import PaymentModal from '../components/PaymentModal';
 
 const Marketplace = () => {
   const navigate = useNavigate();
@@ -18,6 +19,11 @@ const Marketplace = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [selectedListing, setSelectedListing] = useState<{
+    token_id: number;
+    price: number;
+  } | null>(null);
 
   // Fetch listings from the backend
   useEffect(() => {
@@ -60,6 +66,11 @@ const Marketplace = () => {
   const handleTicketClick = (tokenId: number) => {
     setSelectedTicketId(tokenId);
     setIsDetailsModalOpen(true);
+  };
+
+  const handleBuyNow = (listing: { token_id: number; price: number }) => {
+    setSelectedListing(listing);
+    setIsPaymentModalOpen(true);
   };
 
   if (error) {
@@ -154,7 +165,10 @@ const Marketplace = () => {
                 <button className="px-4 py-2 bg-neon-blue/10 rounded-lg text-neon-blue font-medium hover:bg-neon-blue/20 transition-colors">
                   Place Bid
                 </button>
-                <button className="px-4 py-2 bg-gradient-to-r from-neon-blue to-cyber-purple rounded-lg text-white font-medium hover:shadow-lg hover:shadow-neon-blue/50 transition-shadow">
+                <button 
+                  onClick={() => handleBuyNow({ token_id: listing.token_id, price: listing.price })}
+                  className="px-4 py-2 bg-gradient-to-r from-neon-blue to-cyber-purple rounded-lg text-white font-medium hover:shadow-lg hover:shadow-neon-blue/50 transition-shadow"
+                >
                   Buy Now
                 </button>
               </div>
@@ -169,6 +183,16 @@ const Marketplace = () => {
           isOpen={isDetailsModalOpen}
           onClose={() => setIsDetailsModalOpen(false)}
           tokenId={selectedTicketId}
+        />
+      )}
+
+      {/* Add Payment Modal */}
+      {selectedListing && (
+        <PaymentModal
+          isOpen={isPaymentModalOpen}
+          onClose={() => setIsPaymentModalOpen(false)}
+          amount={selectedListing.price}
+          ticketId={selectedListing.token_id}
         />
       )}
     </div>
