@@ -3,16 +3,18 @@ import React, { useState } from "react";
 // Extend the Window interface to include the ethereum property
 declare global {
   interface Window {
-    ethereum: any;
+    ethereum?: any;
   }
 }
+
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
 import axios from "axios";
 import { Wallet } from "lucide-react";
+import { supabase } from "../lib/supabaseClient"; // Import Supabase client
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3005";
+const API_URL = import.meta.env.REACT_APP_API_URL || "http://localhost:3005";
 
 const Login = () => {
   const [error, setError] = useState<string>("");
@@ -51,10 +53,43 @@ const Login = () => {
       const signedMessage = await signer.signMessage(nonce);
       console.log("Signed message:", signedMessage); // Debug log
 
-      // Step 3: Send the signed message to the backend
+      // Step 3: Check if the user exists in Supabase
+      const { data: user, error: userError } = await supabase
+        .from("users")
+        .select("*")
+        .eq("wallet_address", address)
+        .single();
+
+      if (userError && userError.code !== "PGRST116") {
+        // PGRST116 = no rows found
+        throw new Error("Error fetching user data from Supabase");
+      }
+
+      // If the user doesn't exist, create a new user in Supabase
+      if (!user) {
+        const { data: newUser, error: createUserError } = await supabase
+          .from("users")
+          .insert([
+            {
+              wallet_address: address,
+              created_at: new Date().toISOString(),
+              last_login: new Date().toISOString(),
+            },
+          ])
+          .select()
+          .single();
+
+        if (createUserError) {
+          throw new Error("Error creating user in Supabase");
+        }
+
+        console.log("New user created:", newUser); // Debug log
+      }
+
+      // Step 4: Send the signed message to the backend
       const authResponse = await axios.post(`${API_URL}/auth/connect`, {
         walletAddress: address,
-        signedMessage: signedMessage,
+        signature: signedMessage, // Use 'signature' instead of 'signedMessage'
       });
 
       // Store the token properly
@@ -67,7 +102,7 @@ const Login = () => {
     } catch (error) {
       console.error("Connection error:", error);
       const errorMessage =
-        (error as any).response?.data?.message || (error as Error).message;
+        (error as any).response?.data?.message || (error as any).message;
       if (axios.isAxiosError(error)) {
         console.log("Error details:", {
           status: error.response?.status,

@@ -10,19 +10,20 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.48.1",
     "@tanstack/react-query": "^5.24.1",
+    "@web3modal/wagmi": "^4.0.11",
+    "ethers": "^6.11.1",
+    "framer-motion": "^11.0.8",
     "lucide-react": "^0.344.0",
+    "qrcode.react": "^3.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "framer-motion": "^11.0.8",
-    "react-router-dom": "^6.22.2",
-    "ethers": "^6.11.1",
-    "qrcode.react": "^3.1.0",
     "react-hot-toast": "^2.4.1",
-    "@web3modal/wagmi": "^4.0.11",
+    "react-router-dom": "^6.22.2",
+    "tailwind-merge": "^2.2.1",
     "viem": "^2.7.15",
-    "wagmi": "^2.5.7",
-    "tailwind-merge": "^2.2.1"
+    "wagmi": "^2.5.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
