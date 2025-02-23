@@ -6,7 +6,9 @@ Where data are stored on-chain as encrypted data. Consumers have full control ov
 
 🛠Built for KRACKHACK 2025
 
+
 ## 🚀 Installation & Setup
+
 
 1. Clone the repository:
  
@@ -41,56 +43,7 @@ Where data are stored on-chain as encrypted data. Consumers have full control ov
  ![Screenshot_4]
 
  ## Repository Structure
-    /repository-root
-│── backend
-│   ├── src
-│   │   ├── controllers/
-│   │   ├── middleware/
-│   │   ├── routes/
-│   │   ├── services/
-│   │   ├── utils/
-│   │   ├── app.js
-│   │   ├── server.js
-│   │   ├── Marketplace.json
-│   │   ├── TicketNFT.json
-│   │   ├── package.json
-│   │   ├── package-lock.json
-│   │   ├── schema.sql
-│── blockchain
-│   ├── contracts/
-│   ├── ignition/
-│   ├── scripts/
-│   ├── test/
-│   ├── hardhat.config.js
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── README.md
-│── frontendAPP
-│   ├── src
-│   │   ├── components/
-│   │   ├── lib/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   ├── types/
-│   │   ├── utils/
-│   │   ├── App.tsx
-│   │   ├── index.css
-│   │   ├── main.tsx
-│   │   ├── vite-env.d.ts
-│   ├── index.html
-│   ├── eslint.config.js
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── postcss.config.js
-│   ├── tailwind.config.js
-│   ├── tickets_rows.csv
-│   ├── tsconfig.app.json
-│   ├── tsconfig.json
-│   ├── tsconfig.node.json
-│   ├── vite.config.ts
-│── frontend-test/
-│── LICENSE
-│── .gitignore
+/repository-root │── backend │ ├── src │ │ ├── controllers/ # Handles business logic │ │ ├── middleware/ # Middleware for authentication, logging, etc. │ │ ├── routes/ # API route handlers │ │ ├── services/ # External service interactions │ │ ├── utils/ # Utility functions │ │ ├── app.js # Main Express app │ │ ├── server.js # Server entry point │ │ ├── Marketplace.json # Smart contract ABI │ │ ├── TicketNFT.json # Ticket NFT Smart Contract ABI │ │ ├── package.json # Backend dependencies │ │ ├── package-lock.json # Lock file for package versions │ │ ├── schema.sql # SQL schema for database │── blockchain │ ├── contracts/ # Solidity smart contracts │ ├── ignition/ # Contract deployment automation │ ├── scripts/ # Deployment/testing scripts │ ├── test/ # Blockchain testing scripts │ ├── hardhat.config.js # Hardhat configuration │ ├── package.json # Blockchain dependencies │ ├── package-lock.json # Lock file for package versions │ ├── README.md # Documentation for blockchain setup │── frontendAPP │ ├── src │ │ ├── components/ # Reusable UI components │ │ ├── lib/ # Utility functions/libraries │ │ ├── pages/ # Page components │ │ ├── services/ # API calls and blockchain interactions │ │ ├── types/ # TypeScript interfaces/types │ │ ├── utils/ # Helper functions │ │ ├── App.tsx # Main React component │ │ ├── index.css # Global styles │ │ ├── main.tsx # React entry point │ │ ├── vite-env.d.ts # Environment types │ ├── index.html # Root HTML file │ ├── eslint.config.js # ESLint configuration │ ├── package.json # Frontend dependencies │ ├── package-lock.json # Lock file for package versions │ ├── postcss.config.js # PostCSS configuration │ ├── tailwind.config.js # TailwindCSS configuration │ ├── tickets_rows.csv # Sample ticket data │ ├── tsconfig.app.json # TypeScript config for frontend │ ├── tsconfig.json # General TypeScript config │ ├── tsconfig.node.json # TypeScript config for Node.js │ ├── vite.config.ts # Vite configuration │── frontend-test/ # Possibly for testing frontend components │── LICENSE # License file │── .gitignore # Ignored files for Git
 
 ## Summary of Codebase
 1. Backend (backend/)
