@@ -62,13 +62,15 @@ Where data are stored on-chain as encrypted data. Consumers have full control ov
     
     npm install
 
+    do this step in frontendAPP, backend, blockchain directory.
 
- 3. Start the development server:
+
+ 4. Start the development server:
     
-    npm start
+    npm run dev 
 
 
- 4. Open http://localhost:3005/ in your browser.
+ 5. Open http://localhost:3005/ in your browser.
 
 
  ## 🏆 Team Members
