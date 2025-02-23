@@ -32,7 +32,7 @@ Where data are stored on-chain as encrypted data. Consumers have full control ov
 
  📦Scalability: The system is designed to handle a large number of users and transactions, making it suitable for large-scale events.
 
- ## System Architecture
+ ## 💾System Architecture
 
 
 ![system archtecture dark mode](https://github.com/user-attachments/assets/41e09103-c6dc-4423-a3a1-b01ade33bba9)
