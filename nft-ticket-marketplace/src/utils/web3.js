@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import { React, useState } from "react";
 import { ethers } from "ethers";
 import axios from "axios";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3005";
 
-const ConnectWallet = () => {
+const LoginPage = () => {
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
   const [walletAddress, setWalletAddress] = useState("");
   const [message, setMessage] = useState("");
 
@@ -52,6 +55,7 @@ const ConnectWallet = () => {
         // Force state update and clear any previous errors
         setWalletAddress(address);
         setMessage("Wallet connected and authenticated successfully!");
+        console.log(address, message);
       } catch (error) {
         console.error("Connection error:", error);
         const errorMessage = error.response?.data?.message || error.message;
@@ -69,30 +73,19 @@ const ConnectWallet = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">Connect Wallet</h2>
-      <div className="max-w-md">
-        <button
-          onClick={connectWallet}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Connect Wallet
-        </button>
-        {walletAddress && (
-          <p className="mt-4">Connected Address: {walletAddress}</p>
-        )}
-        {message && (
-          <p
-            className={
-              message.includes("Error") ? "text-red-500" : "text-green-500"
-            }
-          >
-            {message}
-          </p>
-        )}
-      </div>
+    <div className="bg-background-base min-h-screen flex flex-col justify-center items-center">
+      <h1 className="text-holographic-white text-4xl font-bold mb-8">
+        Connect Your Wallet
+      </h1>
+      <button
+        onClick={connectWallet}
+        className="bg-gradient-to-r from-electric-blue to-cyber-purple text-white px-6 py-3 rounded-lg font-semibold shadow-neon hover:scale-105 transition-transform"
+      >
+        Connect MetaMask
+      </button>
+      {error && <p className="text-plasma-pink mt-4">{error}</p>}
     </div>
   );
 };
 
-export default ConnectWallet;
+export default LoginPage;
