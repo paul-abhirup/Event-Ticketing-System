@@ -34,7 +34,8 @@ Where data are stored on-chain as encrypted data. Consumers have full control ov
 
  ## System Architecture
 
-![system architecture](https://github.com/user-attachments/assets/ab88bb7c-4fc1-488a-9ed4-5e3da16bbd22)
+
+![system archtecture dark mode](https://github.com/user-attachments/assets/41e09103-c6dc-4423-a3a1-b01ade33bba9)
 
  
 
