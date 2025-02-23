@@ -252,4 +252,41 @@ const purchaseTicket = async (req, res) => {
       .json({ message: error.message || "Error purchasing ticket" });
   }
 };
-module.exports = { listTicket, placeBid, purchaseTicket };
+
+// const supabase = require("../services/supabaseService");
+
+const getAllListings = async (req, res) => {
+  try {
+    // Fetch all listings with ticket and event details
+    const { data: listings, error } = await supabase.from(
+      "marketplace_listings"
+    ).select(`
+        *,
+        tickets:token_id (
+          event_id,
+          events:event_id (
+            image_ipfs_hash
+          )
+        )
+      `);
+
+    if (error) {
+      console.error("Supabase Query Error:", error);
+      return res.status(500).json({ message: "Error fetching listings" });
+    }
+
+    // Format the data to include event image IPFS hash
+    const formattedListings = listings.map((listing) => ({
+      ...listing,
+      eventImageIpfsHash: listing.tickets.events.image_ipfs_hash,
+    }));
+
+    res.status(200).json(formattedListings);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = { getAllListings };
+module.exports = { listTicket, placeBid, purchaseTicket, getAllListings };
