@@ -33,15 +33,27 @@ Where data are stored on-chain as encrypted data. Consumers have full control ov
 6. Open http://localhost:3005/ in your browser.
 
 ## 🎥Demo
- 
- Check out the live demo: website link here.
+### Landing page:-
+  ![IMG-20250224-WA0006](https://github.com/user-attachments/assets/ad128cb4-e18a-4204-8684-42c00bb68c4c)
 
- Watch our demo video: youtube video here.
+### Dashboard:-
+![IMG-20250224-WA0005](https://github.com/user-attachments/assets/0256cb74-2fa4-4f3e-97bf-95cdd4111cdf)
 
- ![Screenshot_1]
- ![Screenshot_2]
- ![Screenshot_3]
- ![Screenshot_4]
+### MarketPlace:-
+![IMG-20250224-WA0007](https://github.com/user-attachments/assets/62ff2a44-ad96-450d-9786-d33a0475bc73)
+
+### List your tickets:-
+![IMG-20250224-WA0004](https://github.com/user-attachments/assets/a7447531-5d11-4bec-9c09-14d8b5ae3051)
+
+### Ticket details:-
+![IMG-20250224-WA0001](https://github.com/user-attachments/assets/e0e9e033-85c6-41b8-9cc1-59f32090ccb3)
+
+### Profile page:-
+![projfidf](https://github.com/user-attachments/assets/113e5b9d-7cc3-4ec4-bbcd-87357477ba34)
+
+### QR code for ticket check:-
+![IMG-20250224-WA0002](https://github.com/user-attachments/assets/96dc1e4b-a90c-471a-8bbb-a0e3c816b224)
+
 
  ## 📁 Repository Structure
 
