@@ -192,8 +192,8 @@ Functionality:
  - **Real-Time:** Redis and Websocket
  - **Authentication:** Metamask Authentication and Supabase Authentication
 ---
-# CodeBase use
-## **User Authentication and Experience Features**
+
+## **App workflow**
 
 Here’s how to design the authentication and user experience:
 
