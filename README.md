@@ -33,6 +33,7 @@ Where data are stored on-chain as encrypted data. Consumers have full control ov
 6. Open http://localhost:3005/ in your browser.
 
 ## 🎥Demo
+### Landing page
   ![IMG-20250224-WA0006](https://github.com/user-attachments/assets/ad128cb4-e18a-4204-8684-42c00bb68c4c)
 
 ![IMG-20250224-WA0005](https://github.com/user-attachments/assets/0256cb74-2fa4-4f3e-97bf-95cdd4111cdf)
