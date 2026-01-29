@@ -297,4 +297,3 @@ You can verify the smart contact using **EtherScan** or **PolygonScan**
  ## 🏆 Team Members
  
  -**Abhirup Paul**
- -**Ankit Suthar**
